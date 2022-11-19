@@ -31,8 +31,8 @@ class model:
 # Optional: implement hyperparameter tuning.
 def train_model(
     train,
-    save_path,
     categorical_features=[],
+    save_path=None,
     label=None):
     """
     Trains a machine learning model and returns it.
