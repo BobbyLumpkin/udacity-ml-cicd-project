@@ -1,10 +1,14 @@
 from attrs import define, field
 import joblib
+from joblib import Parallel, delayed
 from lightgbm import LGBMClassifier
 import logging
+import numpy as np
+import pandas as pd
 from sklearn.metrics import fbeta_score, precision_score, recall_score
 from sklearn.model_selection import GridSearchCV
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
+from typing import Union
 
 
 from ml.data import process_data
@@ -21,11 +25,98 @@ _logger.addHandler(_console_handler)
 
 
 @define
-class model:
+class model_obj:
     encoder: OneHotEncoder
+    lb: LabelBinarizer
     model: LGBMClassifier
     categorical_features: list = None
     label: str = None
+
+
+@define
+class model_metrics:
+    model_obj: model_obj
+    data: Union[pd.DataFrame, np.ndarray]
+    slice_vars: Union[str, list] = None
+    metrics_dict: dict = None
+    
+    def __attrs_post_init__(self):
+        if not self.slice_vars:
+            self.slice_vars = self.model_obj.categorical_features
+
+    def compute_metrics(
+        self,
+        n_jobs: int = -1,
+        verbose: int = 0,
+        return_dict: bool = True
+    ):
+        """
+        Compute model metrics and store as attributes.
+        """
+        # Process data and make predictions.
+        _logger.info(
+            "Processing data and generating predictions."
+        )
+        data = self.data
+        model_obj = self.model_obj
+        label = model_obj.label
+        X, y, encoder, lb = process_data(
+            data,
+            categorical_features=model_obj.categorical_features,
+            training=False,
+            encoder=model_obj.encoder,
+            label=label,
+            lb=model_obj.lb
+        )
+        data["y"] = y
+        data["preds"] = model_obj.model.predict(X)
+
+        # Generate metrics for total population.
+        _logger.info(
+            "Generating metrics for total population."
+        )
+        metrics = compute_model_metrics(data["y"], data["preds"])
+        metrics_dict = {
+            "total_population" : {
+                "precision" : metrics[0],
+                "recall" : metrics[1],
+                "fbeta" : metrics[2]
+            }
+        }
+
+        def _compute_slice_var_metrics(data, slice_var, slice_val):
+            """
+            Compute metrics on a slice of a categorical variable.
+            """
+            data_slice = data[data[slice_var] == slice_val]
+            y = data_slice.y
+            preds = data_slice.preds
+            metrics = compute_model_metrics(y, preds)
+            return {
+                "slice_val" : slice_val,
+                "precision" : metrics[0],
+                "recall" : metrics[1],
+                "fbeta" : metrics[2]
+            }
+        
+        for slice_var in self.slice_vars:
+            _logger.info(
+                "Generating metrics for {slice_var} "
+                "slices.".format(slice_var=slice_var)
+            )
+            slice_vals = data[slice_var].unique().tolist()
+            metrics_dict[slice_var] = Parallel(n_jobs=n_jobs, verbose=verbose)(
+                delayed(_compute_slice_var_metrics)(
+                    data=data,
+                    slice_var=slice_var,
+                    slice_val=slice_val
+                )
+                for slice_val in slice_vals
+            )
+        self.metrics_dict = metrics_dict
+        if return_dict:
+            return metrics_dict
+        return
 
 
 # Optional: implement hyperparameter tuning.
@@ -78,8 +169,9 @@ def train_model(
     _logger.info("Performing grid search over parameter space.")
     lgbm_gs.fit(X_train, y_train)
     _model = lgbm_gs.best_estimator_
-    return_obj = model(
+    return_obj = model_obj(
         encoder=encoder,
+        lb=lb,
         model=_model,
         categorical_features=categorical_features,
         label=label
@@ -119,12 +211,12 @@ def compute_model_metrics(y, preds):
     return precision, recall, fbeta
 
 
-def inference(model, X):
+def inference(model_obj, X):
     """ Run model inferences and return the predictions.
 
     Inputs
     ------
-    model : model
+    model_obj : model_obj
         Saved model_objs, or path to.
     X : np.array
         Data used for prediction.
@@ -134,20 +226,20 @@ def inference(model, X):
         Predictions from the model.
     """
     # Load model_objs if necessary.
-    if isinstance(model, str):
+    if isinstance(model_obj, str):
         _logger.info(
-            "Loading model object from {model}".format(model=model)
+            "Loading model object from {model_obj}".format(model_obj=model_obj)
         )
-        model = joblib.load(model)
+        model_obj = joblib.load(model_obj)
 
     # Process data.
     _logger.info("Processing data for inference.")
     X_proc, y_proc, encoder, lb = process_data(
         X,
-        categorical_features=model.categorical_features,
+        categorical_features=model_obj.categorical_features,
         training=False,
-        encoder=model.encoder
+        encoder=model_obj.encoder
     )
     _logger.info("Returning model scores.")
-    return model.model.predict(X_proc)
+    return model_obj.model.predict(X_proc)
 
