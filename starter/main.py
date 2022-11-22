@@ -2,8 +2,15 @@
 from fastapi import FastAPI
 import json
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+import sys
 from typing import List, Union
+
+
+sys.path.append("starter")
+
+
+from starter.ml.model import inference
 
 
 app = FastAPI()
@@ -21,30 +28,33 @@ async def get_greeting():
 
 
 class Observation(BaseModel):
-    age: Union[int, List[int]]
-    workclass: Union[str, List[str]]
-    fnlgt: Union[int, List[int]]
-    education: Union[str, List[str]]
-    education_num: Union[int, List[int]]
-    marital_status: Union[str, List[str]]
-    occupation: Union[str, List[str]]
-    relationship: Union[str, List[str]]
-    race: Union[str, List[str]]
-    sex: Union[str, List[str]]
-    capital_gain: Union[int, List[int]]
-    capital_loss: Union[int, List[int]]
-    hours_per_week: Union[int, List[int]]
-
+    age: Union[int, List[int]] = Field(example=28)
+    workclass: Union[str, List[str]] = Field(example="Private")
+    fnlgt: Union[int, List[int]] = Field(example=338409)
+    education: Union[str, List[str]] = Field(example="Masters")
+    education_num: Union[int, List[int]] = Field(example=17)
+    marital_status: Union[str, List[str]] = Field(example="Never-married")
+    occupation: Union[str, List[str]] = Field(example="Prof-specialty")
+    relationship: Union[str, List[str]] = Field(example="Not-in-family")
+    race: Union[str, List[str]] = Field(example="Black")
+    sex: Union[str, List[str]] = Field(example="Male")
+    capital_gain: Union[int, List[int]] = Field(example=0)
+    capital_loss: Union[int, List[int]] = Field(example=0)
+    hours_per_week: Union[int, List[int]] = Field(example=40)
+    native_country: Union[str, List[str]] = Field(example="United-States")
 
 
 @app.post("/scoring/")
 async def score_observations(observation: Observation):
+    # Load model obj.
+    model_path = "model/model_obj.pkl"
     observation_dict = json.loads(observation.json())
     observation_dict = {
         k.replace("_", "-"):v for k, v in observation_dict.items()
     }
     df = pd.DataFrame(observation_dict)
-    df.age = df.age + 1
-    return df.to_dict()
+    preds = inference(model_obj=model_path, X=df)
+    preds_dict = {"preds" : preds.tolist()}
+    return preds_dict#df.to_dict()
 
 
