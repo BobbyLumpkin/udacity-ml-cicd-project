@@ -26,21 +26,23 @@ class Observation(BaseModel):
     fnlgt: Union[int, List[int]]
     education: Union[str, List[str]]
     education_num: Union[int, List[int]]
-
-
-    # marital_status: Union[str, List[str]]
-    # occupation: Union[str, List[str]]
-    # relationship: Union[str, List[str]]
-    # race: Union[str, List[str]]
-    # sex: Union[str, List[str]]
-    # capital_gain: Union[int, List[int]]
-    # capital_loss: Union[int, List[int]]
+    marital_status: Union[str, List[str]]
+    occupation: Union[str, List[str]]
+    relationship: Union[str, List[str]]
+    race: Union[str, List[str]]
+    sex: Union[str, List[str]]
+    capital_gain: Union[int, List[int]]
+    capital_loss: Union[int, List[int]]
+    hours_per_week: Union[int, List[int]]
 
 
 
 @app.post("/scoring/")
 async def score_observations(observation: Observation):
     observation_dict = json.loads(observation.json())
+    observation_dict = {
+        k.replace("_", "-"):v for k, v in observation_dict.items()
+    }
     df = pd.DataFrame(observation_dict)
     df.age = df.age + 1
     return df.to_dict()
