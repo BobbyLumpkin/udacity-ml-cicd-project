@@ -4,17 +4,17 @@ Author(s): Bobby Lumpkin
 """
 
 
-from fastapi.testclient import TestClient
+from pathlib import Path
 import pytest
+import sys
 
 
-from main import app
+sys.path.append(
+    str(Path(__file__).parents[1])
+)
 
-
-# Instantiate the testing client with our app.
-client = TestClient(app)
 
 @pytest.mark.unittest_api
-def test_api_locally_get_root():
+def test_api_locally_get_root(client):
     r = client.get("/")
     assert r.status_code == 200

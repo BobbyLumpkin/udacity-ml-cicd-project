@@ -2,15 +2,16 @@
 from fastapi import FastAPI
 import json
 import pandas as pd
+from pathlib import Path
 from pydantic import BaseModel, Field
 import sys
 from typing import List, Union
 
 
-sys.path.append("starter")
+sys.path.append(str(Path(__file__).parent / "starter"))
 
 
-from starter.ml.model import inference
+from ml.model import inference
 
 
 app = FastAPI()

@@ -5,7 +5,14 @@ Author(s): Bobby Lumpkin
 
 
 import numpy as np
+from pathlib import Path
 import pytest
+import sys
+
+
+sys.path.append(
+    str(Path(__file__).parents[1] / "starter")
+)
 
 
 from ml.model import (
