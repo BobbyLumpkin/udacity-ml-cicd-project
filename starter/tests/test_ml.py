@@ -11,7 +11,7 @@ import pytest
 from ml.model import (
     compute_model_metrics,
     inference,
-    model,
+    model_obj as model,
     train_model
 )
 
@@ -56,8 +56,6 @@ def test_inference(
     Unittest for ml.inference.
     """
     X = data.drop([label], axis=1)
-    inference_results = inference(model=model, X=X)
+    inference_results = inference(model_obj=model, X=X)
     assert isinstance(inference_results, np.ndarray)
     assert len(inference_results) == len(data.index)
-
-

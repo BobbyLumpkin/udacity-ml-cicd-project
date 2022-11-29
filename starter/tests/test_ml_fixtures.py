@@ -7,6 +7,7 @@ Author(s): Bobby Lumpkin
 import joblib
 import numpy as np
 import pandas as pd
+from pathlib import Path
 import pytest
 
 
@@ -32,7 +33,7 @@ def label():
 @pytest.fixture()
 def data():
     return pd.read_csv(
-        "../data/census.csv"
+        Path(__file__).parents[1] / "data/census.csv"
     ).iloc[0:100]
 
 
@@ -48,9 +49,8 @@ def preds():
 
 @pytest.fixture()
 def model():
-    model_path = (
-        "/home/ubuntu/deploying-a-scalable-ml-pipeline-in-production"
-        "/project/udacity-ml-cicd-project/starter/model/model_objs.pkl"
+    model_path = Path(
+        Path(__file__).parents[1] / "model/model_obj.pkl"
     )
     return joblib.load(model_path)
 
