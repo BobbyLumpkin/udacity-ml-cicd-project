@@ -17,3 +17,8 @@ def app():
 def client(app):
     client = TestClient(app)
     return client
+
+
+@pytest.fixture()
+def post_scoring_path():
+    return "/scoring/"

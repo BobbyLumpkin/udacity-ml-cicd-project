@@ -46,16 +46,30 @@ class Observation(BaseModel):
 
 
 @app.post("/scoring/")
-async def score_observations(observation: Observation):
+def score_observations(observation: Observation):
     # Load model obj.
-    model_path = "model/model_obj.pkl"
+    model_path = str(Path(__file__).parent / "model/model_obj.pkl")
+
+    # Convert observation obj into pandas df.
     observation_dict = json.loads(observation.json())
     observation_dict = {
         k.replace("_", "-"):v for k, v in observation_dict.items()
     }
-    df = pd.DataFrame(observation_dict)
+    df_kwargs = {"data" : observation_dict}
+    pass_index = False
+    for key in list(observation_dict.keys()):
+        if not isinstance(observation_dict[key], list):
+            pass_index = True
+            break
+    
+    if pass_index:
+        df_kwargs["index"] = [0]
+
+    df = pd.DataFrame(**df_kwargs)
+
+    # Perform inference and return results.
     preds = inference(model_obj=model_path, X=df)
     preds_dict = {"preds" : preds.tolist()}
-    return preds_dict#df.to_dict()
+    return preds_dict
 
 
