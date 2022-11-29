@@ -18,3 +18,9 @@ sys.path.append(
 def test_api_locally_get_root(client):
     r = client.get("/")
     assert r.status_code == 200
+    assert r.json() == {
+        "greeting" : (
+            "Greetings!,\n\nWe hope you enjoy this API!"
+            "\n\nBest,\nThe Creators"
+        )
+    }
