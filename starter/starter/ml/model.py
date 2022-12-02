@@ -1,4 +1,4 @@
-from attrs import define, field
+from attrs import define
 import joblib
 from joblib import Parallel, delayed
 from lightgbm import LGBMClassifier
@@ -77,10 +77,10 @@ class model_metrics:
         )
         metrics = compute_model_metrics(data["y"], data["preds"])
         metrics_dict = {
-            "total_population" : {
-                "precision" : metrics[0],
-                "recall" : metrics[1],
-                "fbeta" : metrics[2]
+            "total_population": {
+                "precision": metrics[0],
+                "recall": metrics[1],
+                "fbeta": metrics[2]
             }
         }
 
@@ -93,10 +93,10 @@ class model_metrics:
             preds = data_slice.preds
             metrics = compute_model_metrics(y, preds)
             return {
-                "slice_val" : slice_val,
-                "precision" : metrics[0],
-                "recall" : metrics[1],
-                "fbeta" : metrics[2]
+                "slice_val": slice_val,
+                "precision": metrics[0],
+                "recall": metrics[1],
+                "fbeta": metrics[2]
             }
         
         for slice_var in self.slice_vars:
@@ -124,7 +124,8 @@ def train_model(
     train,
     categorical_features=[],
     save_path=None,
-    label=None):
+    label=None
+):
     """
     Trains a machine learning model and returns it.
 
@@ -156,8 +157,8 @@ def train_model(
     learning_rate_list = [0.1, 0.01, 0.001]
     parameters_lgbm = {
         'n_estimators': n_estimators_list,
-        'num_leaves' : num_leaves_list,
-        'learning_rate' : learning_rate_list
+        'num_leaves': num_leaves_list,
+        'learning_rate': learning_rate_list
     }  
     lgbm_gs = GridSearchCV(
         LGBMClassifier(),
@@ -191,7 +192,8 @@ def train_model(
 
 def compute_model_metrics(y, preds):
     """
-    Validates the trained machine learning model using precision, recall, and F1.
+    Validates the trained machine learning model using precision,
+    recall, and F1.
 
     Inputs
     ------
@@ -242,4 +244,3 @@ def inference(model_obj, X):
     )
     _logger.info("Returning model scores.")
     return model_obj.model.predict(X_proc)
-
