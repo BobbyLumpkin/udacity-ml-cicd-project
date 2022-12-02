@@ -71,4 +71,3 @@ def score_observations(observation: Observation):
     preds = inference(model_obj=model_path, X=df)
     preds_dict = {"preds": preds.tolist()}
     return preds_dict
-    
