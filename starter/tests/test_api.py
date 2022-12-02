@@ -20,7 +20,7 @@ def test_api_locally_get_root(client):
     r = client.get("/")
     assert r.status_code == 200
     assert r.json() == {
-        "greeting" : (
+        "greeting": (
             "Greetings!,\n\nWe hope you enjoy this API!"
             "\n\nBest,\nThe Creators"
         )
@@ -28,7 +28,7 @@ def test_api_locally_get_root(client):
 
 
 @pytest.mark.unittest_api
-@pytest.mark.parametrize("post_payload,expected",[
+@pytest.mark.parametrize("post_payload,expected", [
     ({
         'age': 31,
         'workclass': 'Private',
