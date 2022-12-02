@@ -18,10 +18,10 @@ jobs:
       run: |
         docker run -dit --name pydocker --rm -v `pwd`:/repo --workdir="/repo/starter" --entrypoint /bin/bash amancevice/pandas:1.1.1
         docker exec pydocker pip install -r ./requirements.txt
-    # - name: Lint with flake8
-    #   run: |
-    #     docker exec pydocker flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    #     docker exec pydocker flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Lint with flake8
+      run: |
+        docker exec pydocker flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        docker exec pydocker flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       
 
 
