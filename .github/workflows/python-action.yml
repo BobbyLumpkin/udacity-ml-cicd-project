@@ -24,7 +24,7 @@ jobs:
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Create & Activate venv
       run: |
-        conda create --name ci_env --file starter/requirements.txt
+        conda create --channel conda-forge --name ci_env --file starter/requirements.txt
         conda activate ci_env
     - name: Lint with flake8
       run: |
