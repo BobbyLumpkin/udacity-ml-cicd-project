@@ -53,15 +53,15 @@ def score_observations(observation: Observation):
     # Convert observation obj into pandas df.
     observation_dict = json.loads(observation.json())
     observation_dict = {
-        k.replace("_", "-"):v for k, v in observation_dict.items()
+        k.replace("_", "-"): v for k, v in observation_dict.items()
     }
-    df_kwargs = {"data" : observation_dict}
+    df_kwargs = {"data": observation_dict}
     pass_index = False
     for key in list(observation_dict.keys()):
         if not isinstance(observation_dict[key], list):
             pass_index = True
             break
-    
+
     if pass_index:
         df_kwargs["index"] = [0]
 
@@ -69,7 +69,6 @@ def score_observations(observation: Observation):
 
     # Perform inference and return results.
     preds = inference(model_obj=model_path, X=df)
-    preds_dict = {"preds" : preds.tolist()}
+    preds_dict = {"preds": preds.tolist()}
     return preds_dict
-
-
+    

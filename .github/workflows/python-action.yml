@@ -20,7 +20,7 @@ jobs:
         docker exec pydocker pip install -r ./requirements.txt
     - name: Lint with flake8
       run: |
-        docker exec pydocker python -m flake8 . 
+        docker exec pydocker python -m flake8 --ignore=E402 . 
 
 
     # - name: Set up Python 3.8
