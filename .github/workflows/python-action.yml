@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Pull Docker Image & Install Dependencies
       run: |
-        docker run -dit --name pydocker --rm -v `pwd`:/repo --workdir="repo/starter" --entrypoint /bin/bash amancevice/pandas:1.1.1
+        docker run -dit --name pydocker --rm -v `pwd`:/repo --workdir="/repo/starter" --entrypoint /bin/bash amancevice/pandas:1.1.1
         docker exec pydocker pip install -r ./requrements.txt
     # - name: Lint with flake8
     #   run: |
