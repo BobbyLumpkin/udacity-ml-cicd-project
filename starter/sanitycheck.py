@@ -43,15 +43,15 @@ def run_sanity_check(test_dir):
 
     test_functions_for_get = list(
         filter(
-            lambda x: inspect.getsource(getattr(module, x)).find('.get(')
-                      != -1, 
+            lambda x: inspect.getsource(getattr(module, x)).find('.get(') 
+            != -1, 
             test_function_names
         )
     )
     test_functions_for_post = list(
         filter(
-            lambda x: inspect.getsource(getattr(module, x)).find('.post(')
-                      != -1, 
+            lambda x: inspect.getsource(getattr(module, x)).find('.post(') 
+            != -1, 
             test_function_names
         )
     )
