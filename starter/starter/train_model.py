@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # Add the necessary imports for the starter code.
-from ml.model import train_model, inference, model_metrics
+from ml.model import train_model, model_metrics
 
 
 _logger = logging.getLogger(__name__)
@@ -24,7 +24,8 @@ data = pd.read_csv(
     "../data/census.csv"
 )
 
-# Optional enhancement, use K-fold cross validation instead of a train-test split.
+# Optional enhancement, use K-fold cross validation instead of a
+# train-test split.
 cat_features = [
     "workclass",
     "education",
@@ -139,7 +140,7 @@ if __name__ == "__main__":
                 var=args.slice_plot_var,
                 metric=metric
             ),
-            fontdict={"fontsize" : 30}
+            fontdict={"fontsize": 30}
         )
         plt.savefig(
             "../figures/{var}_slices_{metric}.png".format(
