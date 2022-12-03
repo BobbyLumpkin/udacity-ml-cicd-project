@@ -14,15 +14,15 @@ import pytest
 @pytest.fixture()
 def categorical_features():
     return [
-    "workclass",
-    "education",
-    "marital-status",
-    "occupation",
-    "relationship",
-    "race",
-    "sex",
-    "native-country",
-]
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+    ]
 
 
 @pytest.fixture()
@@ -39,12 +39,12 @@ def data():
 
 @pytest.fixture()
 def y():
-    return np.array([1,1,1,1,1,1,1,1,1,1])
+    return np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
 
 @pytest.fixture()
 def preds():
-    return np.array([1,1,1,1,1,1,1,1,1,0])
+    return np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 0])
 
 
 @pytest.fixture()
