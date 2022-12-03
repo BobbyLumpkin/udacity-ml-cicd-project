@@ -46,7 +46,7 @@ class Observation(BaseModel):
 
 
 @app.post("/scoring/")
-def score_observations(observation: Observation):
+async def score_observations(observation: Observation):
     # Load model obj.
     model_path = str(Path(__file__).parent / "model/model_obj.pkl")
 
