@@ -34,8 +34,8 @@ def run_sanity_check(test_dir):
     test_function_names = list(
         filter(
             (
-                lambda x: inspect.isfunction(getattr(module, x))
-                and not x.startswith('__')
+                lambda x: inspect.isfunction(getattr(module, x)) and
+                not x.startswith('__')
             ),
             dir(module)
         )
