@@ -20,7 +20,10 @@ jobs:
         docker exec pydocker pip install -r ./requirements.txt
     - name: Lint with flake8
       run: |
-        docker exec pydocker python -m flake8 --ignore=E402,W,F . 
+        docker exec pydocker python -m flake8 --ignore=E402,W,F .
+    - name: Run Unittests
+      run: |
+        docker exec pydocker python -m pytest -v -m "unittest or unittest_api" .
 
 
     # - name: Set up Python 3.8
